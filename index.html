@@ -76,39 +76,6 @@
       border-radius: 99px;
     }
 
-    /* ── Disclaimer ── */
-    .disclaimer-bar {
-      background: #1a1500;
-      border-bottom: 1px solid #3a2e00;
-      padding: 10px 20px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 0.8rem;
-      color: #c8a83a;
-      line-height: 1.5;
-    }
-    .disclaimer-bar svg {
-      flex-shrink: 0;
-      margin-top: 1px;
-      width: 15px;
-      height: 15px;
-    }
-    .disclaimer-close {
-      margin-left: auto;
-      flex-shrink: 0;
-      background: none;
-      border: none;
-      color: #c8a83a;
-      cursor: pointer;
-      opacity: 0.6;
-      padding: 0 0 0 8px;
-      line-height: 1;
-      font-size: 1rem;
-      transition: opacity 0.15s;
-    }
-    .disclaimer-close:hover { opacity: 1; }
-
     /* ── Chat area ── */
     .chat-area {
       flex: 1;
@@ -366,13 +333,6 @@
     <span class="topbar-badge">AI v0.1</span>
   </header>
 
-  <div class="disclaimer-bar" id="disclaimer-bar">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-    </svg>
-    Hi Anders here! sooo i'm still learning how to code AI... so at this moment my bot is really good at answering questions - not at making conversation! Thank you!
-    <button class="disclaimer-close" aria-label="Close" onclick="document.getElementById('disclaimer-bar').style.display='none'">✕</button>
-  </div>
 
   <div class="chat-area" id="chat-area">
     <div class="msg-row bot">
