@@ -5,7 +5,7 @@
   <link rel="preconnect" href="https://static.cloudflareinsights.com">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content" />
   <link rel="icon" type="image/webp" href="favicon/fly emoji.webp" />
-  <title>AI (Agnostic Intelligence) — Anders Sveidahl</title>
+  <title>AI</title>
   <meta name="description" content="Agnostic Intelligence — the world's most honest chatbot. A creative project by Anders Sveidahl." />
   <link rel="canonical" href="https://anderssveidahl.com/agnostic_intelligence.html" />
   <meta property="og:type" content="website" />
@@ -414,7 +414,33 @@
     <p class="input-hint"><a href="https://anderssveidahl.com" target="_blank" rel="noopener" class="credit-link">By Anders Sveidahl</a></p>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/franc-min@5/index.js"></script>
   <script>
+    // ── Language detection & translation ──
+    const franc3to1 = {
+      eng:'en', zho:'zh', cmn:'zh', yue:'zh',
+      hin:'hi', spa:'es', fra:'fr', ara:'ar',
+      ben:'bn', por:'pt', rus:'ru', urd:'ur',
+      dan:'da', nor:'no', nob:'no', nno:'no',
+      deu:'de', swe:'sv'
+    };
+
+    function detectLang(text) {
+      if (!text || text.trim().length < 4) return 'en';
+      const code3 = francMin(text);
+      return franc3to1[code3] || 'en';
+    }
+
+    async function translate(text, targetLang) {
+      if (targetLang === 'en') return text;
+      try {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.responseStatus === 200) return data.responseData.translatedText;
+      } catch(e) {}
+      return text;
+    }
     const responses = [
       "dude i got no clue",
       "bruh idk",
@@ -501,9 +527,11 @@
 
     let lastAnswer = null;
 
-    function send() {
+    async function send() {
       const text = qInput.value.trim();
       if (!text) return;
+
+      const lang = detectLang(text);
 
       addMessage(text, 'user');
       qInput.value = '';
@@ -511,7 +539,7 @@
       sendBtn.disabled = true;
       const thinkingRow = addMessage('', 'bot', true);
 
-      setTimeout(() => {
+      setTimeout(async () => {
         thinkingRow.remove();
         let answer;
         if (isQuestion(text)) {
@@ -522,13 +550,16 @@
           answer = pool[Math.floor(Math.random() * pool.length)];
         }
         lastAnswer = answer;
+
         if (Array.isArray(answer)) {
+          // translate all parts up front
+          const parts = await Promise.all(answer.map(p => translate(p, lang)));
           function showNext(i) {
-            const isLast = i === answer.length - 1;
+            const isLast = i === parts.length - 1;
             const thinkRow = addMessage('', 'bot', true, true);
             setTimeout(() => {
               thinkRow.remove();
-              addMessage(answer[i], 'bot', false, true);
+              addMessage(parts[i], 'bot', false, true);
               if (isLast) {
                 qInput.disabled = false;
                 sendBtn.disabled = false;
@@ -538,10 +569,11 @@
               }
             }, 3000);
           }
-          addMessage(answer[0], 'bot');
+          addMessage(parts[0], 'bot');
           showNext(1);
         } else {
-          addMessage(answer, 'bot');
+          const translated = await translate(answer, lang);
+          addMessage(translated, 'bot');
           qInput.disabled = false;
           sendBtn.disabled = false;
           qInput.focus();
