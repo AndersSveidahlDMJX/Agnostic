@@ -568,7 +568,7 @@
 
     function isQuestion(text) {
       if (text.trim().endsWith('?')) return true;
-      const questionWords = /^(what|whats|what's|why|how|who|where|when|which|whose|whom|is|are|was|were|do|does|did|can|could|would|should|will|won't|wouldn't|isn't|aren't|wasn't|weren't|don't|doesn't|didn't|have|has|had|may|might|shall)\b/i;
+      const questionWords = /^(what|whats|what's|why|how|who|where|when|which|whose|whom|is|are|was|were|do|does|did|can|could|would|should|will|won't|wouldn't|isn't|aren't|wasn't|weren't|don't|doesn't|didn't|have|has|had|may|might|shall|er det|er der|hvad|hvorfor|hvordan|hvem|hvor|hvilken|kan man|kan du|vil du|har du|ved du|tror du|synes du|må man|skal man|burde man)\b/i;
       return questionWords.test(text.trim());
     }
 
