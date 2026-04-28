@@ -414,7 +414,10 @@
     <p class="input-hint"><a href="https://anderssveidahl.com" target="_blank" rel="noopener" class="credit-link">By Anders Sveidahl</a></p>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/franc-min@5/index.js"></script>
+  <script type="module">
+    import { franc } from 'https://esm.sh/franc-min@5';
+    window.francMin = franc;
+  </script>
   <script>
     // ── Language detection & translation ──
     const franc3to1 = {
@@ -427,8 +430,10 @@
 
     function detectLang(text) {
       if (!text || text.trim().length < 4) return 'en';
-      const code3 = francMin(text);
-      return franc3to1[code3] || 'en';
+      try {
+        const code3 = window.francMin(text);
+        return franc3to1[code3] || 'en';
+      } catch(e) { return 'en'; }
     }
 
     async function translate(text, targetLang) {
