@@ -278,6 +278,16 @@
       color: #333;
       text-align: center;
     }
+    .credit-link {
+      color: inherit;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      opacity: 0.35;
+      transition: opacity 0.3s ease;
+    }
+    .credit-link:hover {
+      opacity: 0.75;
+    }
 
 
     /* ── Suggestion chips ── */
@@ -400,8 +410,7 @@
         </svg>
       </button>
     </div>
-    <p class="input-hint">Agnostic Intelligence may produce inaccurate answers.</p>
-    <p class="input-hint"><a href="https://anderssveidahl.com" target="_blank" rel="noopener" style="color:inherit;opacity:0.45;text-decoration:none;letter-spacing:0.03em;">By Anders Sveidahl</a></p>
+    <p class="input-hint"><a href="https://anderssveidahl.com" target="_blank" rel="noopener" class="credit-link">By Anders Sveidahl</a></p>
   </div>
 
   <script>
