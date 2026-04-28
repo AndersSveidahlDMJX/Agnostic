@@ -559,7 +559,6 @@
       const thinkingRow = addMessage('', 'bot', true);
 
       setTimeout(async () => {
-        thinkingRow.remove();
         let answer;
         if (isQuestion(text)) {
           let pool = responses.filter(r => r !== lastAnswer);
@@ -571,8 +570,8 @@
         lastAnswer = answer;
 
         if (Array.isArray(answer)) {
-          // translate all parts up front
           const parts = await Promise.all(answer.map(p => translate(p, lang)));
+          thinkingRow.remove();
           function showNext(i) {
             const isLast = i === parts.length - 1;
             const thinkRow = addMessage('', 'bot', true, true);
@@ -592,6 +591,7 @@
           showNext(1);
         } else {
           const translated = await translate(answer, lang);
+          thinkingRow.remove();
           addMessage(translated, 'bot');
           qInput.disabled = false;
           sendBtn.disabled = false;
