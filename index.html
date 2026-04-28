@@ -414,26 +414,40 @@
     <p class="input-hint"><a href="https://anderssveidahl.com" target="_blank" rel="noopener" class="credit-link">By Anders Sveidahl</a></p>
   </div>
 
-  <script type="module">
-    import { franc } from 'https://esm.sh/franc-min@5';
-    window.francMin = franc;
-  </script>
   <script>
     // ── Language detection & translation ──
-    const franc3to1 = {
-      eng:'en', zho:'zh', cmn:'zh', yue:'zh',
-      hin:'hi', spa:'es', fra:'fr', ara:'ar',
-      ben:'bn', por:'pt', rus:'ru', urd:'ur',
-      dan:'da', nor:'no', nob:'no', nno:'no',
-      deu:'de', swe:'sv'
+    const langPatterns = [
+      { lang: 'zh', re: /[\u4e00-\u9fff]/ },
+      { lang: 'ar', re: /[\u0600-\u06ff]/ },
+      { lang: 'hi', re: /[\u0900-\u097f]/ },
+      { lang: 'bn', re: /[\u0980-\u09ff]/ },
+      { lang: 'ur', re: /[\u0600-\u06ff\u0750-\u077f]/ },
+      { lang: 'ru', re: /[\u0400-\u04ff]/ },
+    ];
+
+    const wordLists = {
+      da: ['hvad','hvorfor','hvordan','hvem','hvor','hvilken','er','det','og','til','at','jeg','du','han','hun','vi','ikke','men','som','med','kan','har','vil','var','på','af','en','et','den','de','jeg','os','dig','ham','hende'],
+      sv: ['vad','varför','hur','vem','vilken','är','det','och','till','att','jag','du','han','hon','vi','inte','men','som','med','kan','har','var','på','av','en','ett','den','de','oss','dig','honom','henne'],
+      no: ['hva','hvorfor','hvordan','hvem','hvilken','er','det','og','til','at','jeg','du','han','hun','vi','ikke','men','som','med','kan','har','vil','var','på','av','en','et','den','de'],
+      de: ['was','warum','wie','wer','welche','ist','das','und','zu','ich','du','er','sie','wir','nicht','aber','als','mit','kann','hat','war','auf','von','ein','eine','der','die','uns','dich','ihn'],
+      es: ['qué','por','cómo','quién','cuál','es','que','y','para','yo','tú','él','ella','nosotros','no','pero','como','con','puede','tiene','fue','en','de','un','una','los','las','nos'],
+      fr: ['quoi','pourquoi','comment','qui','quel','est','que','et','pour','je','tu','il','elle','nous','pas','mais','comme','avec','peut','est','était','sur','de','un','une','les','des','nous','vous'],
+      pt: ['que','por','como','quem','qual','é','e','para','eu','tu','ele','ela','nós','não','mas','como','com','pode','tem','foi','em','de','um','uma','os','as'],
     };
 
     function detectLang(text) {
-      if (!text || text.trim().length < 4) return 'en';
-      try {
-        const code3 = window.francMin(text);
-        return franc3to1[code3] || 'en';
-      } catch(e) { return 'en'; }
+      const t = text.trim();
+      if (!t) return 'en';
+      for (const { lang, re } of langPatterns) {
+        if (re.test(t)) return lang;
+      }
+      const words = t.toLowerCase().replace(/[.,!?;:]/g, '').split(/\s+/);
+      let best = 'en', bestScore = 0;
+      for (const [lang, list] of Object.entries(wordLists)) {
+        const score = words.filter(w => list.includes(w)).length;
+        if (score > bestScore) { bestScore = score; best = lang; }
+      }
+      return bestScore > 0 ? best : 'en';
     }
 
     async function translate(text, targetLang) {
